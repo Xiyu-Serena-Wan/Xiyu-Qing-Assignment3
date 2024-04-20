@@ -45,8 +45,16 @@ function Register() {
   return (
     <div>
       <Navbar />
+      <br></br>
+      <br></br>
+      <br></br>
+      <br></br>
+      
       <div className="container">
-        <h1>Register Page</h1>
+      <br></br>
+      <br></br>
+
+        <h1>Registeration</h1>
         {errorMsgState && <h1>{errorMsgState}</h1>}
 
 <hr></hr>

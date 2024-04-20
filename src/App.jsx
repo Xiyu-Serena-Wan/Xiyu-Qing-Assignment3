@@ -1,7 +1,10 @@
 import axios from 'axios'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
+
+// export const Context = React.createContext();
 
 function App() {
+  // const [userStatus, setUserStatus] = useState('out');
 
   const [usernameState, setUsernameState] = useState('')
 

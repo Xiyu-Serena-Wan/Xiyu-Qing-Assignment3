@@ -21,7 +21,7 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/api/pokemon', pokemon);
+app.use('/api/pwdManager', pokemon);
 app.use('/api/users', users);
 
 // app.get('/', function(req, res) {

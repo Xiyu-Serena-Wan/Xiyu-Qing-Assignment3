@@ -4,10 +4,10 @@ const express = require('express');
 const router = express.Router();
 const PokemonModel = require('./db/pokemon.model.cjs')
 
-let pokemonColors = [
-    {name: "pikachu", color: "yellow"},
-    {name: "charizard", color: "red"},
-];
+// let pokemonColors = [
+//     {name: "pikachu", color: "yellow"},
+//     {name: "charizard", color: "red"},
+// ];
 
 // /api/pokemon/
 router.post('/', async function(req, res) {
@@ -16,17 +16,19 @@ router.post('/', async function(req, res) {
 
     if(!username) {
         res.status(401);
-        return res.send("You need to be logged in to create a pokemon!")
+        return res.send("You need to be logged in to create a password!")
     }
 
-    if(!requestBody.name || !requestBody.color) {
+    if(!requestBody.URL) {
+        console.log(requestBody.URL);
+        console.log(requestBody.password)
         res.status(401);
-        return res.send("Please insert valid Pokemon Name and Color!")
+        return res.send("Please insert valid URL and password!")
     }
 
     const newPokemon = {
-        name: requestBody.name,
-        color: requestBody.color,
+        URL: requestBody.URL,
+        password: requestBody.password,
         owner: username,
     }
 

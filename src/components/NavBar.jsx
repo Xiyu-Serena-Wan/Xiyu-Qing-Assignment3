@@ -1,31 +1,36 @@
-// Navbar.js
-import React from 'react';
-//import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-//import { faUser } from "@fortawesome/free-solid-svg-icons";
+import React, { useState, useContext } from 'react';
 import './NavBar.css';
+import { useNavigate } from 'react-router-dom';
 
-// const logo = require('../../../assets/images/logoNest.png');
+import axios from 'axios';
 
 const Navbar = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
+
+  async function logout() {
+    await axios.post('/api/users/logout');
+    setIsLoggedIn(true);
+    navigate('/');
+  }
+
   return (
+    // <Context.Provider value={[ isLoggedIn, setIsLoggedIn ]}>
     <div className="navbar">
-      {/* <img src={logo} alt="logoOfNest" className="logoImg" /> */}
       <div className="links">
         <a href="HomePage">Home</a>
-        <a href="login">LogIn</a>
-        <a href="/register">SignUp</a>
-        {/* <a href="/">RENT</a> */}
-      </div>
-      <div className="buttons">
-        {/* <button>
-          <a className="signIn" href="/App.js">
-            Sign In
+        {isLoggedIn ? (
+          <a href="HomePage" onClick={logout}>
+            LogOut
           </a>
-        </button>
-        &nbsp; */}
-        <a href="/account">Profile</a>
+        ) : (
+          <a href="login">LogIn</a>
+        )}
+        {isLoggedIn ? null : <a href="/register">SignUp</a>}
+        <a href="/pwdManager">Passwords</a>
       </div>
     </div>
+    // </Context.Provider>
   );
 };
 

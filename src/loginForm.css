@@ -1,3 +1,8 @@
+:root {
+  display: flex;
+  justify-content: center;
+}
+
 body {
   display: flex;
   justify-content: center;
@@ -8,12 +13,16 @@ body {
 }
 
 .container {
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  max-width: 100%;
   padding: 40px;
   box-shadow: 0 0 10px rgb(0 0 0 / 10%);
   background: #fff;
   border-radius: 8px;
+  margin-left: 400px;
+  margin-right: 400px;
+}
+
+.centerForm {
+  position: relative;
+  justify-content: center;
+  align-items: center;
 }
