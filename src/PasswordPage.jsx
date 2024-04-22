@@ -242,28 +242,6 @@ function PasswordPage() {
             <br></br>
           </div>
           <div>
-            <label>Options:</label>{' '}
-            <input 
-              type="checkbox"
-              checked={includeAlpha}
-              onChange={(event) => setIncludeAlpha(event.target.checked)} />
-            <label>Alphabet</label>
-            <input 
-              type="checkbox"
-              checked={includeNum}
-              onChange={(event) => setIncludeNum(event.target.checked)} />
-              <label>Numerals</label>{' '}
-            <input 
-              type="checkbox"
-              checked={includeSym}
-              onChange={(event) => setIncludeSym(event.target.checked)} />
-              <label>Symbols</label>{' '}
-          </div>
-          <br />
-
-          <div>
-            <button onClick={() => onSubmit()}>Submit</button>
-            <button onClick={() => onCancel()}>Cancel</button>
             <div>
               <label>Website URL (Format: www.xxx.com)</label>{' '}
               <br></br>
@@ -295,6 +273,25 @@ function PasswordPage() {
               />
             </div>
             <br></br>
+            <div>
+            <label>Options:</label>{' '}
+            <input 
+              type="checkbox"
+              checked={includeAlpha}
+              onChange={(event) => setIncludeAlpha(event.target.checked)} />
+            <label>Alphabet</label>
+            <input 
+              type="checkbox"
+              checked={includeNum}
+              onChange={(event) => setIncludeNum(event.target.checked)} />
+              <label>Numerals</label>{' '}
+            <input 
+              type="checkbox"
+              checked={includeSym}
+              onChange={(event) => setIncludeSym(event.target.checked)} />
+              <label>Symbols</label>{' '}
+          </div>
+          <br />
             <br></br>
 
             <div>
