@@ -18,6 +18,10 @@ function PasswordPage() {
   const [errorMsgState, setErrorMsgState] = useState('');
   const [username, setUsername] = useState('');
 
+  const [includeAlpha, setIncludeAlpha] = useState(false);
+  const [includeNum, setIncludeNum] = useState(false);
+  const [includeSym, setIncludeSym] = useState(false);
+
   async function getAllPwd() {
     const response = await axios.get('/api/pwdManager');
     setPwdListState(response.data);
@@ -31,6 +35,11 @@ function PasswordPage() {
   async function onSubmit() {
     setErrorMsgState('');
     try {
+      if (!pwdURLState) {
+        setErrorMsgState('URL is required!');
+        return;
+      }
+
       if (editingState.isEditing) {
         await axios.put('/api/pwdManager/' + editingState.editingPwdId, {
           URL: pwdURLState,
@@ -58,6 +67,40 @@ function PasswordPage() {
       setErrorMsgState(error.response.data);
     }
   }
+
+  const generatePw = () => {
+    if (!pwdPasswordState) {
+      if (!includeAlpha && !includeNum && !includeSym) {
+        setErrorMsgState('At least one checkbox must be checked');
+        return;
+      }
+      if (pwdLengthState < 4 || pwdLengthState > 50) {
+        setErrorMsgState('the length must be between 4 and 50, inclusive');
+        return;
+      }
+    }
+
+    const alpha = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const num = '1234567890';
+    const sym = '!@#$%^&*()-_=+';
+
+    let pw = '';
+    let charSet = '';
+    if (includeAlpha) {
+      charSet += alpha;
+    }
+    if (includeNum) {
+      charSet += num;
+    }
+    if (includeSym) {
+      charSet += sym;
+    }
+    for (let i = 0; i < pwdLengthState; i++) {
+      const randomIdx = Math.floor(Math.random() * charSet.length);
+      pw += charSet[randomIdx];
+    }
+    setPwdPasswordState(pw);
+  };
 
   function updatePwdPassword(event) {
     setPwdPasswordState(event.target.value);
@@ -176,16 +219,39 @@ function PasswordPage() {
               value={pwdPasswordState}
               onInput={(event) => updatePwdPassword(event)}
             />
+            <button onClick={generatePw}>Generate Password</button>
           </div>
           <br></br>
           <div>
             <label>Length:</label>{' '}
             <input
-              value={pwdPasswordState}
-              onInput={(event) => updatePwdPassword(event)}
+              value={pwdLengthState}
+              onInput={(event) => updatePwdLength(event)}
+              min="4"
+              max="50"
             />
           </div>
           <br></br>
+
+          <div>
+            <label>Options:</label>{' '}
+            <input 
+              type="checkbox"
+              checked={includeAlpha}
+              onChange={(event) => setIncludeAlpha(event.target.checked)} />
+            <label>Alphabet</label>
+            <input 
+              type="checkbox"
+              checked={includeNum}
+              onChange={(event) => setIncludeNum(event.target.checked)} />
+              <label>Numerals</label>{' '}
+            <input 
+              type="checkbox"
+              checked={includeSym}
+              onChange={(event) => setIncludeSym(event.target.checked)} />
+              <label>Symbols</label>{' '}
+          </div>
+          <br />
 
           <div>
             <button onClick={() => onSubmit()}>Submit</button>
