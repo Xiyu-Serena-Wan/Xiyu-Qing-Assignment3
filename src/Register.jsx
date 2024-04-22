@@ -2,16 +2,18 @@ import axios from 'axios';
 import { useState } from 'react';
 import Navbar from './components/NavBar';
 import './loginForm.css';
+import { useNavigate } from 'react-router';
+
 
 function Register() {
   const [usernameState, setUsernameState] = useState('');
   const [passwordState, setPasswordState] = useState('');
   const [verifyPasswordState, setVerifyPasswordState] = useState('');
   const [errorMsgState, setErrorMsgState] = useState('');
+  const navigate = useNavigate();
 
   async function onSubmit() {
     setErrorMsgState('');
-    // verify password
     if (verifyPasswordState !== passwordState) {
       setErrorMsgState('Please verify passwords are the same :)');
       return;
@@ -25,6 +27,7 @@ function Register() {
 
       setPasswordState('');
       setUsernameState('');
+      navigate('/login')
     } catch (error) {
       setErrorMsgState(error.response.data);
     }

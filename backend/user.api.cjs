@@ -77,7 +77,8 @@ router.post('/login', async function(request, response) {
 
 router.get('/loggedIn', function(request, response) {
     const username = cookieHelper.cookieDecryptor(request);
-
+    console.log("checked login")
+    console.log(username)
     if(username) {
         return response.send({
             username: username,

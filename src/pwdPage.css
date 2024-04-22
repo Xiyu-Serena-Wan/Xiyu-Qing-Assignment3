@@ -1,3 +1,40 @@
 .pmContainer{
     margin-left: 300px;
 }
+
+.logoutButton{
+    padding: 6px;
+    padding-left: 10px;
+    padding-right: 10px;
+    background-color: lightgray;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    height: 40px;
+}
+
+
+.logoutButton:hover{
+    background-color: red;
+    border-color: beige;
+}
+
+.noBold{
+    font-size: 30px;
+    margin: 0;
+    background-color: white;
+    padding: 2px;
+    margin-right: 20px;
+}
+
+.userContainer{
+    display: flex;
+    flex-direction: row;
+}
+
+li{
+    padding-bottom: 10px;
+}
+
+.pwdInput{
+    width: 90%;
+}
