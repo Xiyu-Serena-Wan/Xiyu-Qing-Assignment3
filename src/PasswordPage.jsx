@@ -5,6 +5,8 @@ import './pwdPage.css';
 import './components/NavBar.css';
 import './loginForm.css';
 
+import userModel from '../backend/db/user.model.cjs';
+
 export const Context = React.createContext();
 
 function PasswordPage() {
@@ -26,6 +28,9 @@ function PasswordPage() {
   const [includeNum, setIncludeNum] = useState(false);
   const [includeSym, setIncludeSym] = useState(false);
 
+  const [guestName, setGuestName] = useState('');
+  const [guestpwdListState, setGuestPwdListState] = useState([]);
+
   async function getAllPwd() {
     const response = await axios.get('/api/pwdManager');
     setPwdListState(response.data);
@@ -34,6 +39,24 @@ function PasswordPage() {
   async function deletePwd(pwdId) {
     await axios.delete('/api/pwdManager/' + pwdId);
     await getAllPwd();
+  }
+
+  async function sendRequest(event){
+    setErrorMsgState('');
+    try {
+      const getUserResponse = await userModel.getUserByUsername(event.target.value);
+      if (!getUserResponse) {
+        setErrorMsgState('user does not exist!');
+        return;
+      }
+      if (username === getUserResponse.username) {
+        setErrorMsgState("You can't share passwords with yourself");
+        return;
+      }
+
+    } catch (error) {
+      setErrorMsgState(error.response.data);
+    }
   }
 
   async function onSubmit() {
@@ -117,6 +140,10 @@ function PasswordPage() {
     setPwdLengthState(event.target.value);
   }
 
+  function updateGuestName(event) {
+    setGuestName(event.target.value);
+  }
+
   function setEditingPwd(pwdURL, pwdPassword, pwdId) {
     setPwdPasswordState(pwdPassword);
     setPwdURLState(pwdURL);
@@ -183,6 +210,15 @@ function PasswordPage() {
     );
   }
 
+  const guestpwdListElement = [];
+  for (let i = 0; i < guestpwdListState.length; i++) {
+    guestpwdListElement.push(
+      <li>
+        URL: {guestpwdListState[i].URL} - Password: {guestpwdListState[i].password} &nbsp;&nbsp;
+      </li>,
+    );
+  }
+
   const inputFieldTitleText = editingState.isEditing
     ? 'Edit password'
     : 'Create new password';
@@ -239,7 +275,6 @@ function PasswordPage() {
           <hr></hr>
           <div>
             <h4>{inputFieldTitleText}</h4>
-            <br></br>
           </div>
           <div>
             <div>
@@ -292,12 +327,26 @@ function PasswordPage() {
               <label>Symbols</label>{' '}
           </div>
           <br />
-            <br></br>
-
             <div>
               <button onClick={() => onSubmit()}>Submit</button>
               &nbsp; &nbsp;&nbsp;
               <button onClick={() => onCancel()}>Cancel</button>
+            </div>
+          </div>
+          <hr></hr>
+          <div>
+            <h4>Would you like to share passwords?</h4>
+            <div>
+              <label>Input another user's username:</label>{' '}
+              <br></br>
+              <input className='guestInput'
+                value={guestName}
+                onInput={(event) => updateGuestName(event)}
+              />
+              <button onClick={() => sendRequest()}>Send a message</button>
+              <h4>Here are all your passwords:</h4>
+              <ul>{guestpwdListElement}</ul>
+              <hr></hr>
             </div>
           </div>
         </div>
