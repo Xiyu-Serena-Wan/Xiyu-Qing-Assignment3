@@ -5,8 +5,6 @@ import './pwdPage.css';
 import './components/NavBar.css';
 import './loginForm.css';
 
-import userModel from '../backend/db/user.model.cjs';
-
 export const Context = React.createContext();
 
 function PasswordPage() {
@@ -41,18 +39,20 @@ function PasswordPage() {
     await getAllPwd();
   }
 
-  async function sendRequest(event){
+  async function sendRequest(){
     setErrorMsgState('');
     try {
-      const getUserResponse = await userModel.getUserByUsername(event.target.value);
+      const getUserResponse = await axios.get(`/api/users/${guestName}`);
       if (!getUserResponse) {
         setErrorMsgState('user does not exist!');
         return;
       }
-      if (username === getUserResponse.username) {
+      if (username === getUserResponse.data.username) {
         setErrorMsgState("You can't share passwords with yourself");
         return;
       }
+      const response = await axios.get('/api/pwdManager');
+      setGuestPwdListState(response.data);
 
     } catch (error) {
       setErrorMsgState(error.response.data);
@@ -68,7 +68,7 @@ function PasswordPage() {
       }
 
       if (editingState.isEditing) {
-        await axios.put('/api/pwdManager/' + editingState.editingPwdId, {
+        await axios.put('/api/pwdManager/' + editingState.editingpwdId, {
           URL: pwdURLState,
           password: pwdPasswordState,
           length: pwdLengthState,

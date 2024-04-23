@@ -9,7 +9,7 @@ const PokemonModel = require('./db/pokemon.model.cjs')
 //     {name: "charizard", color: "red"},
 // ];
 
-// /api/pokemon/
+// /api/pwdManager/
 router.post('/', async function(req, res) {
     const requestBody = req.body;
     const username = cookieHelper.cookieDecryptor(req);
@@ -86,8 +86,6 @@ router.put('/:pkId', async function(req, res) {
 // -> /pokemon/pikachu?food=banana
 router.get('/:pkId', async function(req, res) {
     const pokemonId = req.params.pkId;
-
-
     try {
         const getPokemonResponse = await PokemonModel.getPokemonById(pokemonId);
         return res.send(getPokemonResponse);
@@ -153,6 +151,17 @@ router.get('/', async function(req, res) {
         return res.send("Error inserting Pokemon into DB :/");
     }
 
+})
+
+router.get('/:userId', async function(request, response) {
+    const owner = request.params.userId;
+    try {
+        const getPokemonResponse = await PokemonModel.getPokemonByOwner(owner);
+        return response.send(getPokemonResponse);
+    } catch (error) {
+        response.status(400);
+        return response.send(error);
+    }
 })
 
 

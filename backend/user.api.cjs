@@ -41,7 +41,6 @@ router.post('/register', async function(request, response) {
         response.status(400);
         return response.send('Failed to create user with message ' + error)
     }
-
 });
 
 router.post('/login', async function(request, response) {
@@ -89,8 +88,19 @@ router.get('/loggedIn', function(request, response) {
     }
 })
 
-router.post('/logout', function(request, response) {
+router.get('/:userId', async function(request, response) {
+    const username = request.params.userId;
+    console.log(username);
+    try {
+        const getPokemonResponse = await userModel.getUserByUsername(username);
+        return response.send(getPokemonResponse);
+    } catch (error) {
+        response.status(400);
+        return response.send(error);
+    }
+})
 
+router.post('/logout', function(request, response) {
     response.clearCookie('username');
     return response.send('Logged out');
 });
