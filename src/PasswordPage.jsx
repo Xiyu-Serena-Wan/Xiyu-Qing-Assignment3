@@ -8,7 +8,7 @@ import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 
 function PasswordPage() {
-  let guestpwdListElement=[]
+  // let guestpwdListElement=[]
 
   const navigate = useNavigate();
   const [loggedIn, setLoggedIn] = useState(false);
@@ -67,7 +67,12 @@ function PasswordPage() {
       //get passwords by owner
       const sharedPasswords = await axios.get(`/api/pwdManager/${guestID}`);
       // guestpwdListElement = sharedPasswords;
-      setGuestPwdListState(sharedPasswords)
+      // setGuestPwdListState(sharedPasswords)
+
+      
+      const response = await axios.get('/api/pwdManager');
+      setGuestPwdListState(response.data);
+
     } catch (error) {
       setErrorMsgState(error.response.data);
     }
@@ -234,6 +239,16 @@ function PasswordPage() {
       </li>,
     );
   }
+  const guestpwdListElement = [];
+  for (let i = 0; i < guestpwdListState.length; i++) {
+    guestpwdListElement.push(
+      <li>
+        URL: {guestpwdListState[i].URL} - Password: {guestpwdListState[i].password} &nbsp;&nbsp;
+      </li>,
+    );
+  }
+  // console.log("00000000000000")
+  // console.log(guestpwdListElement)
 
   const inputFieldTitleText = editingState.isEditing
     ? 'Edit password'

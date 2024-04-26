@@ -16,8 +16,7 @@ module.exports = new Schema({
         type: Date,
         default: Date.now
     },
-    sharedByUsers: 
-    {
+    sharedByUsers: {
         type: [String],
     },
 
