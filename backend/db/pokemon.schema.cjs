@@ -11,5 +11,5 @@ module.exports = new Schema({
     created: {
         type: Date,
         default: Date.now
-    } 
+    },
 }, { collection : 'URLPasswordManagement2024' });

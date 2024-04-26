@@ -11,29 +11,24 @@ function getUserByUsername(username) {
     return UserModel.findOne({username: username}).exec();
 }
 
-// function getPokemonById(id) {
-//     return PokemonModel.findById(id).exec();
+// function getSendersByUserID(userID) {
+//     const user = UserModel.findById(userID).exec();
+//     // let listOfSenders = null;
+//     console.log("user.sharedByUsers" + user)
+//     // for(let i = 0; i < user.sharedByUsers.length;i++){
+//         const s = UserModel.getUserByUsername(user.sharedByUsers[0]);
+//         // listOfSenders.push(s);
+//     // }
+//     return s;
 // }
 
-// function deletePokemon(id) {
-//     return PokemonModel.deleteOne({_id: id})
-// }
-
-// function updatePokemon(id, pokemon) {
-//     return PokemonModel.findOneAndUpdate({_id: id}, pokemon)
-// }
-
-// function getPokemonByOwner(owner) {
-//     return PokemonModel.find({
-//         owner: owner,
-//     }).exec();
-// }
+function updateUsers(username, sharedByUsers) {
+    return UserModel.findOneAndUpdate({username: username}, sharedByUsers)
+}
 
 module.exports = {
     insertUser,
     getUserByUsername,
-    // updatePokemon,
-    // insertPokemon, 
-    // getAllPokemon,
-    // getPokemonByOwner
+    updateUsers,
+    // getSendersByUserID,
 }

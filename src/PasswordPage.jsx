@@ -4,10 +4,12 @@ import { useNavigate } from 'react-router';
 import './pwdPage.css';
 import './components/NavBar.css';
 import './loginForm.css';
-
-export const Context = React.createContext();
+import Popup from 'reactjs-popup';
+import 'reactjs-popup/dist/index.css';
 
 function PasswordPage() {
+  let guestpwdListElement=[]
+
   const navigate = useNavigate();
   const [loggedIn, setLoggedIn] = useState(false);
 
@@ -21,14 +23,15 @@ function PasswordPage() {
   });
   const [errorMsgState, setErrorMsgState] = useState('');
   const [username, setUsername] = useState('');
-
   const [includeAlpha, setIncludeAlpha] = useState(false);
   const [includeNum, setIncludeNum] = useState(false);
   const [includeSym, setIncludeSym] = useState(false);
-
+  const [sharingGroup, setSharingGroup]=useState([]);
   const [guestName, setGuestName] = useState('');
   const [guestpwdListState, setGuestPwdListState] = useState([]);
-
+  const [guestID, setGuestID] = useState(0);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [pwdError, setPwdError] = useState("");
   async function getAllPwd() {
     const response = await axios.get('/api/pwdManager');
     setPwdListState(response.data);
@@ -41,19 +44,30 @@ function PasswordPage() {
 
   async function sendRequest(){
     setErrorMsgState('');
+    setPwdError('');
+    setErrorMsg('');
+
     try {
       const getUserResponse = await axios.get(`/api/users/${guestName}`);
       if (!getUserResponse) {
         setErrorMsgState('user does not exist!');
         return;
       }
-      if (username === getUserResponse.data.username) {
-        setErrorMsgState("You can't share passwords with yourself");
+      
+      if (username === guestName) {
+        // setErrorMsgState("You can't share passwords with yourself");
+        setErrorMsg("You can't share passwords with yourself");
         return;
       }
-      const response = await axios.get('/api/pwdManager');
-      setGuestPwdListState(response.data);
+      setGuestID(getUserResponse.data._id)
+      const sharedByUsers = getUserResponse.sharedByUsers || [];
+      sharedByUsers.push(username);
+      await axios.put(`/api/users/${guestName}`, { sharedByUsers });
 
+      //get passwords by owner
+      const sharedPasswords = await axios.get(`/api/pwdManager/${guestID}`);
+      // guestpwdListElement = sharedPasswords;
+      setGuestPwdListState(sharedPasswords)
     } catch (error) {
       setErrorMsgState(error.response.data);
     }
@@ -63,7 +77,7 @@ function PasswordPage() {
     setErrorMsgState('');
     try {
       if (!pwdURLState) {
-        setErrorMsgState('URL is required!');
+        setPwdError('URL is required!');
         return;
       }
 
@@ -97,11 +111,11 @@ function PasswordPage() {
   const generatePw = () => {
     if (!pwdPasswordState) {
       if (!includeAlpha && !includeNum && !includeSym) {
-        setErrorMsgState('At least one checkbox must be checked');
+        setPwdError('At least one checkbox must be checked');
         return;
       }
       if (pwdLengthState < 4 || pwdLengthState > 50) {
-        setErrorMsgState('the length must be between 4 and 50, inclusive');
+        setPwdError('the length must be between 4 and 50, inclusive');
         return;
       }
     }
@@ -181,6 +195,9 @@ function PasswordPage() {
       const username = response.data.username;
       setUsername(username);
       setLoggedIn(true);
+      const sender  = await axios.get(`/api/users/${username}`);
+      // setGuestID(sender.data._id);
+      setSharingGroup(sender.data.sharedByUsers);
     } catch (e) {
       navigate('/');
     }
@@ -210,7 +227,6 @@ function PasswordPage() {
     );
   }
 
-  const guestpwdListElement = [];
   for (let i = 0; i < guestpwdListState.length; i++) {
     guestpwdListElement.push(
       <li>
@@ -261,21 +277,67 @@ function PasswordPage() {
                 Logout
               </button>
               &nbsp;&nbsp;&nbsp;&nbsp;
+              <Popup
+        trigger={<button className="button" > Notifications </button>}
+        modal
+        nested
+      >
+        {close => (
+          <div className="modal">
+            <button className="close" onClick={close}>
+              &times;
+            </button>
+            <div className="content">
+            {' '}
+              {sharingGroup? <div>
+                <br></br>
+              You received the passwords shared by <strong>{sharingGroup[0]}</strong>.
+              <br></br>
+              Do you want to accept?
+              </div> : 
+              <div> No message found </div>}
+            
+            </div>
+            <br></br>
 
-              <button className="shareButton">
-                Share
+            <div className="actions">
+              <Popup
+                trigger={<button className="button"> Show me </button>}
+                position="bottom center"
+                nested
+              >
+           <ul>{guestpwdListElement.map(pwd=><div>URL: {pwd.URL} - Password: {pwd.password} </div>)}</ul>
+              </Popup>
+              <span>{' '}</span>
+              <button
+                className="button"
+                onClick={() => {
+                  close();
+                }}
+              >
+                Deny
               </button>
+            </div>
+          </div>
+        )}
+      </Popup>
+
             </div>
             <hr></hr>
           </div>
           <br></br>
           {errorMsgState && <h1>{errorMsgState}</h1>}
-          <h4>Here are all your passwords:</h4>
+          <h2>Here are all your passwords:</h2>
           <ul>{pwdListElement}</ul>
+
+          </div></div>
+          <div className="centerForm">
+        <div className="container">
           <hr></hr>
           <div>
-            <h4>{inputFieldTitleText}</h4>
+            <h2>{inputFieldTitleText}</h2>
           </div>
+          <h2>{pwdError}</h2>
           <div>
             <div>
               <label>Website URL (Format: www.xxx.com)</label>{' '}
@@ -333,24 +395,35 @@ function PasswordPage() {
               <button onClick={() => onCancel()}>Cancel</button>
             </div>
           </div>
+          </div></div>
+          <div className="centerForm">
+        <div className="container">
           <hr></hr>
           <div>
-            <h4>Would you like to share passwords?</h4>
+            <h2>Would you like to share passwords?</h2>
             <div>
+            {errorMsg && <h1 className='warning'>{errorMsg}</h1>}
+
               <label>Input another user's username:</label>{' '}
+            <br></br>
               <br></br>
               <input className='guestInput'
                 value={guestName}
                 onInput={(event) => updateGuestName(event)}
               />
               <button onClick={() => sendRequest()}>Send a message</button>
-              <h4>Here are all your passwords:</h4>
-              <ul>{guestpwdListElement}</ul>
-              <hr></hr>
+            <br></br>
+            <br></br>
+
             </div>
           </div>
         </div>
       </div>
+      <br></br>
+      <br></br>
+      <br></br>
+      <br></br>
+
     </div>
   );
 }

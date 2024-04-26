@@ -7,12 +7,6 @@ const router = express.Router();
 
 const userModel = require('./db/user.model.cjs')
 
-// const users = [
-//     {username: 'hunter', trainerId: 123},
-//     {username: 'alex', trainerId: 234}
-// ]
-
-
 // localhost:8000/users/?startOfUsername=h
 router.post('/register', async function(request, response) {
     const requestBody = request.body;
@@ -88,8 +82,8 @@ router.get('/loggedIn', function(request, response) {
     }
 })
 
-router.get('/:userId', async function(request, response) {
-    const username = request.params.userId;
+router.get('/:username', async function(request, response) {
+    const username = request.params.username;
     console.log(username);
     try {
         const getPokemonResponse = await userModel.getUserByUsername(username);
@@ -104,6 +98,57 @@ router.post('/logout', function(request, response) {
     response.clearCookie('username');
     return response.send('Logged out');
 });
+
+// router.get('/:owner', async function(request, response) {
+//     const owner = request.params.owner;
+
+//     if(!owner){
+//         return response.send("Missing username")
+//     }
+
+//     try {
+//         const passwords = await userModel.getPokemonByOwner(owner);
+//         return response.json(passwords);
+//     } catch (error) {
+//         console.error('Error:', error);
+//         return response.status(500).send(error);
+//     }
+// });
+
+router.put('/:username', async function(req, res) {
+    const username = req.params.username;
+    const sharedByUsers = req.body;
+    // console.log(1);
+    if(!username) {
+        res.status(401);
+        return res.send("You need a user to update sharedByUsers!")
+    }
+
+    if (!sharedByUsers) {
+        // console.log(sharedByUsers)
+        // console.log(1)
+
+        res.status(400);
+        return res.send("No users are sharing passwords with you.");
+    }
+
+    try {
+        const getUserResponse = await userModel.getUserByUsername(username);
+        console.log("sharedByUsers: " + sharedByUsers)
+        if(getUserResponse === null) {
+            // console.log(2)
+            res.status(400);
+            return res.send("Username doesn't exists");
+        }
+
+        const pokemonUpdateResponse = await userModel.updateUsers(username, sharedByUsers);
+        return res.send('Successfully updated user ' + username)
+    } catch (error) {
+        res.status(400);
+        // console.log(3)
+        return res.send(error);
+    }
+})
 
 
 // router.post('/', function(request, response) {
@@ -125,5 +170,35 @@ router.post('/logout', function(request, response) {
 
 //     response.json("Successfully created user with trainer ID " + trainerId)
 // })
+
+
+
+
+// Define a route to get a list of user passwords by userid
+// router.get('/passwords/:username', async (req, res) => {
+//     const username = req.params.username;
+//     if (!username) {
+//         return res.status(404).json({ message: 'User not found' });
+//       }
+//     try {
+//       // Find the user document by userId
+//     //   const userList = userModel.getSendersByUserID(userId);
+//         const senderResponse = await userModel.getUserByUsername(username);
+//       console.log(senderResponse)
+
+//       const passwords = await
+
+//     // Iterate over each user object in the userList
+//     // for (const userDocument of userList) {
+//         // Push the password of the user to the passwords array
+//         passwords.push(senderResponse.password);
+//     // }  
+//     return res.send(passwords)
+    
+//     } catch (error) {
+//       console.error('Error:', error);
+//       res.status(500).json({ message: 'Internal server error' });
+//     }
+//   });
 
 module.exports = router;

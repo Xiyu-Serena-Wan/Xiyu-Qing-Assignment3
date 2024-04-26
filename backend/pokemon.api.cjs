@@ -136,13 +136,6 @@ router.get('/', async function(req, res) {
         return res.send("You need to be logged in to create a pokemon!")
     }
 
-    // for(let i = 0; i < pokemonColors.length; i++) {
-    //     const pokemonRow = pokemonColors[i];
-    //     if(pokemonRow.name === pokemonName) {
-    //         return res.send('The color of ' + pokemonName + " is " + pokemonRow.color);
-    //     }
-    // }
-
     try {
         const allPokemonResponse = await PokemonModel.getPokemonByOwner(owner);
         return res.send(allPokemonResponse);
@@ -153,14 +146,16 @@ router.get('/', async function(req, res) {
 
 })
 
-router.get('/:userId', async function(request, response) {
-    const owner = request.params.userId;
+router.get('/:guestID', async function(request, response) {
+    const owner = request.params.guestID;
     try {
         const getPokemonResponse = await PokemonModel.getPokemonByOwner(owner);
+        // console.log(owner)
+        // console.log(getPokemonResponse)
         return response.send(getPokemonResponse);
     } catch (error) {
         response.status(400);
-        return response.send(error);
+        return response.send("wrong get");
     }
 })
 

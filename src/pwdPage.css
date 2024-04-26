@@ -37,4 +37,10 @@ li{
 
 .pwdInput{
     width: 90%;
+    margin-bottom: 10px;
+}
+
+.warning{
+    color: red;
+    background-color: rgb(244, 240, 240);
 }

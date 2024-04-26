@@ -17,12 +17,13 @@ body {
   box-shadow: 0 0 10px rgb(0 0 0 / 10%);
   background: #fff;
   border-radius: 8px;
-  margin-left: 400px;
-  margin-right: 400px;
+  margin-left: 200px;
+  margin-right: 200px;
 }
 
 .centerForm {
   position: relative;
   justify-content: center;
   align-items: center;
+  margin-bottom: 15px;
 }
