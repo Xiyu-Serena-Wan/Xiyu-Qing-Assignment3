@@ -55,7 +55,6 @@ function PasswordPage() {
       }
       
       if (username === guestName) {
-        // setErrorMsgState("You can't share passwords with yourself");
         setErrorMsg("You can't share passwords with yourself");
         return;
       }
@@ -64,12 +63,12 @@ function PasswordPage() {
       sharedByUsers.push(username);
       await axios.put(`/api/users/${guestName}`, { sharedByUsers });
 
-      //get passwords by owner
+      //TODO: get passwords by owner --not working
       const sharedPasswords = await axios.get(`/api/pwdManager/${guestID}`);
       // guestpwdListElement = sharedPasswords;
       // setGuestPwdListState(sharedPasswords)
 
-      
+      //temp
       const response = await axios.get('/api/pwdManager');
       setGuestPwdListState(response.data);
 
@@ -232,13 +231,6 @@ function PasswordPage() {
     );
   }
 
-  for (let i = 0; i < guestpwdListState.length; i++) {
-    guestpwdListElement.push(
-      <li>
-        URL: {guestpwdListState[i].URL} - Password: {guestpwdListState[i].password} &nbsp;&nbsp;
-      </li>,
-    );
-  }
   const guestpwdListElement = [];
   for (let i = 0; i < guestpwdListState.length; i++) {
     guestpwdListElement.push(
