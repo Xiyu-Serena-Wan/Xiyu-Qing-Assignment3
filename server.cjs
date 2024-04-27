@@ -45,6 +45,6 @@ app.get('*', function (req, res) {
     res.sendFile(path.join(frontend_dir, "index.html"));
 });
 
-app.listen(process.env.PORT || 8000, function() {
+app.listen(process.env.PORT || 8000, '0.0.0.0', function() {
     console.log("Starting app now...")
 })
