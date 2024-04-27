@@ -58,15 +58,15 @@ function PasswordPage() {
         setErrorMsg("You can't share passwords with yourself");
         return;
       }
-      setGuestID(getUserResponse.data._id)
+      setGuestID(getUserResponse.data._id);
       const sharedByUsers = getUserResponse.sharedByUsers || [];
       sharedByUsers.push(username);
       await axios.put(`/api/users/${guestName}`, { sharedByUsers });
 
       //TODO: get passwords by owner --not working
-      const sharedPasswords = await axios.get(`/api/pwdManager/${guestID}`);
-      // guestpwdListElement = sharedPasswords;
-      // setGuestPwdListState(sharedPasswords)
+      const sharedPasswords = await axios.get(`/api/pwdManager/${getUserResponse.data._id}`);
+      guestpwdListElement = sharedPasswords;
+      setGuestPwdListState(sharedPasswords)
 
       //temp
       const response = await axios.get('/api/pwdManager');
@@ -231,7 +231,7 @@ function PasswordPage() {
     );
   }
 
-  const guestpwdListElement = [];
+  let guestpwdListElement = [];
   for (let i = 0; i < guestpwdListState.length; i++) {
     guestpwdListElement.push(
       <li>
